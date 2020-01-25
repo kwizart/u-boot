@@ -30,6 +30,7 @@ obj-y += charset.o
 endif
 endif
 obj-$(CONFIG_USB_TTY) += circbuf.o
+obj-$(CONFIG_TEGRA_NVEC) += circbuf.o
 obj-y += crc8.o
 obj-y += crc16.o
 obj-$(CONFIG_ERRNO_STR) += errno_str.o
