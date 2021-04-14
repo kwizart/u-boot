@@ -24,6 +24,7 @@
 #define DEBUG 0
 
 #include <common.h>
+#include <linux/delay.h>
 #include <errno.h>
 #include <dm.h>
 #include <i2c.h>
@@ -379,12 +380,11 @@ static void nvec_init_i2c_slave(struct nvec_t *nvec)
 /**
  * Decode the nvec information from the fdt.
  *
- * @param blob		fdt blob
- * @param config	structure to store fdt config into
+ * @param dev          nvec device
+ * @param config       structure to store fdt config into
  * @return 0 if ok, -ve on error
  */
-static int nvec_decode_fdt(const void *blob, int node,
-			      struct nvec_t *nvec)
+static int nvec_decode_fdt(struct udevice *dev, struct nvec_t *nvec)
 {
 //	int ret;
 
@@ -395,13 +395,12 @@ static int nvec_decode_fdt(const void *blob, int node,
 //		return -ENOENT;
 //	}
 
-	nvec->base = (void __iomem *)fdtdec_get_addr(blob, node, "reg");
-	if (nvec->base == (void __iomem *)FDT_ADDR_T_NONE) {
-		error("No NVEC controller address");
-		return -ENOENT;
-	}
-	nvec->i2c_addr = fdtdec_get_int(blob, node, "slave-addr", -1);
-	nvec->i2c_clk = fdtdec_get_int(blob, node, "clock-frequency", -1);
+	nvec->base = dev_read_addr_ptr(dev);
+	if (!nvec->base)
+		return -ENOMEM;
+
+	nvec->i2c_addr = dev_read_u32_default(dev, "slave-addr", -1);
+	nvec->i2c_clk = dev_read_u32_default(dev, "clock-frequency", -1);
 
 	return 0;
 }
@@ -409,8 +408,6 @@ static int nvec_decode_fdt(const void *blob, int node,
 static int nvec_probe(struct udevice *dev)
 {
 	struct nvec_t *nvec = dev_get_priv(dev);
-	const void *blob = gd->fdt_blob;
-	int node = dev->node.of_offset;
 	int res;
 
 	TRACE();
@@ -424,7 +421,7 @@ static int nvec_probe(struct udevice *dev)
 
 	debug("NVEC initialization...\n");
 
-	if (nvec_decode_fdt(blob, node, nvec_data)) {
+	if (nvec_decode_fdt(dev, nvec_data)) {
 		error("Failed to decode fdt");
 		return -EBUSY;
 	}
@@ -519,6 +516,6 @@ U_BOOT_DRIVER(i2c_nvec) = {
 	.id	= UCLASS_I2C,
 	.of_match = i2c_nvec_ids,
 	.probe	= nvec_probe,
-	.priv_auto_alloc_size = sizeof(struct nvec_t),
+	.priv_auto = sizeof(struct nvec_t),
 	.ops	= &i2c_nvec_ops,
 };
