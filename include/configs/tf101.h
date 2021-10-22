@@ -15,9 +15,9 @@
 
 #define BOARD_EXTRA_ENV_SETTINGS \
 	"script_addr_r=0x1000\0" \
-	"kernel_addr_r=0x12000000\0" \
-	"dtb_addr_r=0x13000000\0" \
-	"ramdisk_addr_r=0x14000000\0" \
+	"kernel_addr_r=0x1000000\0" \
+	"dtb_addr_r=0x2000000\0" \
+	"ramdisk_addr_r=0x3000000\0" \
 	"kernel_file=vmlinuz\0" \
 	"dtb_file="CONFIG_DEFAULT_DEVICE_TREE".dtb\0" \
 	"ramdisk_file=initramfs\0" \
