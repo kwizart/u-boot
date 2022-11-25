@@ -22,7 +22,6 @@
 /* Environment in eMMC, at the end of 2nd "boot sector" */
 
 /* Keyboard support */
-#define CONFIG_KEYBOARD
 #define CONFIG_TEGRA_NVEC_KEYBOARD
 /* NVEC support */
 #define CONFIG_CMD_I2C
