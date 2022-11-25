@@ -723,6 +723,7 @@ config SYS_I2C_IHS
 
 config TEGRA_NVEC
        bool "Enable Tegra 2 NVEC driver"
+       select CIRCBUF
        help
          Support for Tegra 2 I2C NVEC keyboard.
 
